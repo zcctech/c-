@@ -3,6 +3,6 @@
 using namespace std;
 int main()
 {
-	cout << "这是一个github仓库" << endl;
+	cout << "this is a text" << endl;
 	return 0;
 }
