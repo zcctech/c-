@@ -5,8 +5,8 @@
 using namespace std;
 namespace mystring
 {
-	typedef char* interator;
-	typedef const char* const_interator;
+	typedef char* iterator;
+	typedef const char* const_iterator;
 	class string
 	{
 	public:
@@ -17,13 +17,16 @@ namespace mystring
 			_str = new char[_size + 1];
 			strcpy(_str, str);
 		}
+		void swap(string& s)
+		{
+			std::swap(_str, s._str);
+			std::swap(_size, s._size);
+			std::swap(_capacity, s._capacity);
+		}
 		string(const string& s)
 		{
-			_str = new char[s._capacity + 1];
-			strcpy(_str, s._str);
-			_size = s._size;
-			_capacity = s._capacity;
-
+			string tep(s._str);
+			swap(tep);
 
 		}
 		~string()
@@ -39,6 +42,10 @@ namespace mystring
 		{
 			return _size;
 		}
+		size_t capacity()const
+		{
+			return _capacity;
+		}
 		char& operator[](int a)
 		{
 			assert(a < _size);
@@ -49,20 +56,31 @@ namespace mystring
 			assert(a < _size);
 			return _str[a];
 		}
-		interator begin()
+		string& operator=(const string& s1)
+		{
+			if (this == &s1)
+			{
+				return *this;
+		}
+			string tep(s1.c_str());
+			swap(tep);
+			
+			return *this;
+		}
+		iterator begin()
 		{
 			return _str;
 		}
-		interator end()
+		iterator end()
 		{
 			return _str+_size;
 		}
-		const_interator begin()const
+		const_iterator begin()const
 		{
 			return _str;
 		}
 
-		const_interator end()const
+		const_iterator end()const
 		{
 			return _str + _size;
 		}

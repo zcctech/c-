@@ -62,7 +62,7 @@ namespace mystring
 		int end = _size;
 		while (end > pos)
 		{
-			_str[end ] = _str[end-1];
+			_str[end] = _str[end-1];
 			end--;
 		}
 		_str[pos] = ch;
@@ -157,7 +157,7 @@ namespace mystring
 	}
 	bool operator>(const string& s1, const string& s2)
 	{
-		return !strcmp(s1.c_str(), s2.c_str());
+		return (strcmp(s1.c_str(), s2.c_str()))>0;
 	}
 	bool operator>=(const string& s1, const string& s2)
 	{
@@ -189,7 +189,7 @@ namespace mystring
 	{
 		s1.clear();
 		const int n = 10;
-		char tep[n];
+		char tep[n] = { 0 };
 		  char ch;
 		 ch=in.get();
 		 int i = 0;
