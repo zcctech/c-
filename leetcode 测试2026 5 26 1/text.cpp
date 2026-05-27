@@ -52,3 +52,38 @@ public:
         return tep;
     }
 };
+class Solution3 {
+public:
+    int singleNumber(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        int i = 0;
+        while (i < nums.size() - 1)
+        {
+            if (nums[i] == nums[i + 1] && nums[i + 1] == nums[i + 2])
+            {
+                i += 3;
+            }
+            else
+            {
+                return nums[i];
+            }
+        }
+        return nums[i];
+    }
+};
+class Solution4 {
+public:
+    /**
+     * 代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可
+     *
+     *
+     * @param numbers int整型vector
+     * @return int整型
+     */
+    int MoreThanHalfNum_Solution(vector<int>& numbers) {
+        // write code here
+        sort(numbers.begin(), numbers.end());
+        int i = numbers.size() / 2;
+        return numbers[i];
+    }
+};
