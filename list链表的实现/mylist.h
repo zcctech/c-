@@ -19,18 +19,22 @@ namespace mylist
 		,prev(nullptr)
 	{ }
 	};
-template<class T>
+template<class T,class ref,class ptr>
 struct Iterator_list
 {
 	typedef list_node<T> node;
-	typedef Iterator_list<T> self;
+	typedef Iterator_list<T,ref,ptr> self;
 	node* _node;
 	Iterator_list(node* pos)
 		:_node(pos)
 	{ }
-	T& operator*()
+	ref operator*()
 	{
 		return _node->data;
+	}
+	ptr operator->()
+	{
+		return &_node->data;
 	}
 	self& operator++()
 	{
@@ -42,11 +46,23 @@ struct Iterator_list
 		_node = _node->prev;
 		return *this;
 	}
-	bool operator!=(const Iterator_list<T>& a)
+	self& operator++(int)
+	{
+		self ret = *this;
+		_node = _node->next;
+		return ret;
+	}
+	self& operator--(int)
+	{
+		self ret = *this;
+		_node = _node->prev;
+		return ret;
+	}
+	bool operator!=(const self& a)const
 	{
 		return _node!= a._node;
 	}
-	bool operator==(const Iterator_list<T>& a)
+	bool operator==(const self& a)const
 	{
 		return _node == a._node;
 	}
@@ -57,23 +73,62 @@ class list
 {
 public:
 	typedef list_node<T> node;
-	typedef Iterator_list<T> Iterator;
+	typedef Iterator_list<T, T&, T*> Iterator;
+	typedef Iterator_list<T,const T&,const T*> const_Iterator;
 
-
-	list()
-		
+	void empty_init()
 	{
 		_head = new node;
 		_head->next = _head;
 		_head->prev = _head;
 		_size = 0;
 	}
-		Iterator begin()
+	list()
+		
+	{
+		empty_init();
+	}
+	list(const list<T>& it)
+	{
+		empty_init();
+		for (auto a:it)
+		{
+			push_back(a);
+		}
+	}
+	void swap(list<T>& it)
+	{
+		std::swap(_head, it._head);
+		std::swap(_size, it._size);
+	}
+	list<T>operator=(list<T> it)
+		{
+		swap(it);
+		}
+	void clear()
+	{
+		auto it = begin();
+		while (it != end())
+		{
+			it = erase(it);
+		}
+	}
+
+	Iterator begin()
 	{
 			Iterator it(_head->next);
 		return it;
 	}
 	Iterator end()
+	{
+		return _head;
+	}
+	const_Iterator begin()const
+	{
+		
+		return _head->next;
+	}
+	const_Iterator end()const
 	{
 		return _head;
 	}
@@ -87,7 +142,7 @@ public:
 		insert(begin(), x);
 	}
 	
-	void insert(Iterator pos, const T& x)
+	Iterator insert(Iterator pos, const T& x)
 	{
 		node* cur = pos._node;
 		node* prev =cur->prev;
@@ -97,9 +152,11 @@ public:
 		prev->next = newnode;
 		cur->prev = newnode;
 		_size++;
+		return newnode;
 	}
-	void erase(Iterator pos)
+	Iterator erase(Iterator pos)
 	{
+		
 		assert(pos != end());
 		node* cur = pos._node;
 		node* prev = cur->prev;
@@ -108,6 +165,7 @@ public:
 		prev->next = next;
 		next->prev = prev;
 		_size--;
+		return next;
 	}
 	void pop_back()
 	{
@@ -130,4 +188,18 @@ private:
 	node* _head;
 	size_t _size;
 };
+template<class container>
+void print_container(const container& v)
+{
+	auto it = v.begin();
+	while (it != v.end())
+	{
+		cout << *it << " ";
+		it++;
+	}
+	for (auto e : v)
+	{
+		cout << e << " ";
+	}
+}
 }

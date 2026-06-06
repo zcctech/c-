@@ -13,20 +13,16 @@ namespace mylist
 		it.insert(it.begin(), 4);
 		it.insert(it.begin(), 4);
 		it.insert(it.begin(), 4);
+		it.insert(it.begin(), 3);
+		it.insert(it.begin(), 3);
+		it.insert(it.begin(), 3);
+		it.insert(it.begin(), 3);
 		it.erase(--it.end());
 		it.erase(--it.end());
 		it.erase(--it.end());
-		
-		list<int>::Iterator s = it.begin();
-		while (s != it.end())
-		{
-			cout << *s;
-			++s;
-		}
-		cout << endl;
-
+		print_container(it);
 	}
-}
+};
 int main()
 {
 	mylist::text();
