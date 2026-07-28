@@ -1,26 +1,29 @@
 #pragma once
 #include<iostream>
-template<class T>
+
+template<class T,class V>
 class bstreenode {
 public:
-	bstreenode(const T& ans)
+	bstreenode(const T& ans,const V& val)
 		:key(ans)
+		,value(val)
 	{ }
 	bstreenode* left = nullptr;
 	bstreenode* right = nullptr;
 	T key;
+	V value;
 };
-template<class T>
+template<class T,class V>
 class bstree
 {
 public:
-	typedef bstreenode<T> node;
+	typedef bstreenode<T,V> node;
 	bstree() = default;
 	~bstree()
 	{
 		_destroy(root);
 }
-	bstree(const bstree<T>& n)
+	bstree(const bstree& n)
 	{
 		root=copy(n.root);
 	}
@@ -35,11 +38,11 @@ public:
 
 		return *this;
 	}
-	bool insert(const T& num)
+	bool insert(const T& num,const V& value)
 	{
 		if (root == nullptr)
 		{
-			root = new node(num);
+			root = new node(num,value);
 			return true;
 		}
 		node* parent = nullptr;
@@ -61,7 +64,7 @@ public:
 				return false;
 			}
 		}
-		cur = new node(num);
+		cur = new node(num,value);
 		if (num < parent->key)
 		{
 			parent->left = cur;
@@ -193,7 +196,7 @@ private:
 			return;
 		}
 		_inorder(theroot->left);
-		std::cout << theroot->key << " ";
+		std::cout << theroot->key << theroot->value<<" ";
 		_inorder(theroot->right);
 	}
 	void _destroy(node* root)
