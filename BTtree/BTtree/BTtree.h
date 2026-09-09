@@ -6,11 +6,11 @@ enum color
 	RED,
 	BLACK
 };
-template<class T>
+template<class v>
 struct BTtreenode
 {
-	typedef BTtreenode<T> node;
-	BTtreenode(const T& data)
+	typedef BTtreenode<v> node;
+	BTtreenode(const v& data)
 		:_left(nullptr)
 		,_right(nullptr)
 		,_parent(nullptr)
@@ -21,17 +21,89 @@ struct BTtreenode
 	node* _right;
 	node* _left;
 	node* _parent;
-	T _data;
+	v _data;
 };
-template<class T>
+template<class k,class v,class KeyofT>
 struct BTtree
 {
-	typedef BTtreenode<T> node;
+	template<class T, class ref, class ptr>
+	struct Iterator_BTtree
+	{
+		typedef BTtreenode<T> node;
+		typedef Iterator_BTtree<T, ref, ptr> self;
+		node* _node;
+		
+		Iterator_BTtree(node* pos)
+			:_node(pos)
+		{
+		}
+		ref operator*()
+		{
+			return _node->_data;
+		}
+		ptr operator->()
+		{
+			return &_node->_data;
+		}
+		self& operator++()
+		{
+			if (_node->_right)
+			{
+				node* parent = _node;
+				_node = _node->_right;
+				while (_node)
+				{
+					parent = _node;
+					_node = _node->_left;
+				}
+				_node = parent;
+			}
+			else
+			{
+				node* parent = _node->_parent;
+				while (parent && parent->_right == _node)
+				{
+					_node = parent;
+					parent = parent->_parent;
+				}
+				_node = parent;
+			}
+			
+			return *this;
+		}
+		
+		
+		bool operator!=(const self& a)const
+		{
+			return _node != a._node;
+		}
+		bool operator==(const self& a)const
+		{
+			return _node == a._node;
+		}
+		
+	};
+	typedef Iterator_BTtree<v, v&, v*> iterator;
+	typedef Iterator_BTtree<v, const v&, const v*> const_iterator;
+	iterator begin()
+	{
+		node* cur = _root;
+		while (cur&&cur->_left)
+		{
+			cur = cur->_left;
+		}
+		return iterator(cur);
+	}
+	iterator end()
+	{
+		return iterator(nullptr);
+	}
+	typedef BTtreenode<v> node;
 	void inorder()
 	{
 		_inorder(_root);
 	}
-	bool insert(const T& data)
+	bool insert(const v& data)
 	{
 		node* newnode = new node(data);
 		if (_root == nullptr)
@@ -44,13 +116,13 @@ struct BTtree
 		node* parent = nullptr;
 		while (cur)
 		{
-			if (cur->_data > data)
+			if (Kot(cur->_data) > Kot(data))
 			{
 				parent = cur;
 				cur = cur->_left;
 
 			}
-			else if (cur->_data < data)
+			else if (Kot(cur->_data) < Kot( data))
 			{
 				parent = cur;
 				cur = cur->_right;
@@ -61,11 +133,11 @@ struct BTtree
 				return false;
 			}
 		}
-		if (parent->_data > data)
+		if (Kot(parent->_data )> Kot(data))
 		{
 			parent->_left = newnode;
 		}
-		else if(parent->_data < data)
+		else if(Kot(parent->_data) < Kot(data))
 		{
 			parent->_right = newnode;
 		}
@@ -214,16 +286,16 @@ struct BTtree
 			assert(false);
 		}
 	}
-	node* find(const T& v)
+	node* find(const k& value)
 	{
 		node* cur = _root;
 		while (cur)
 		{
-			if (cur->_data > v)
+			if (Kot(cur->_data) > value)
 			{
 				cur = cur->_left;
 			}
-			else if (cur->_data < v)
+			else if (Kot(cur->_data) < value)
 			{
 				cur = cur->_right;
 			}
@@ -248,4 +320,7 @@ private:
 
 	}
 	node* _root=nullptr;
+	KeyofT Kot;
 };
+
+
