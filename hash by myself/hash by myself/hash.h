@@ -122,7 +122,30 @@ struct hashnode
 	hashnode<k, v>* next;
 
 };
-template<class k, class v>
+template<class k>
+struct thehashfanc
+{
+	size_t operator()(const k& key)
+	{
+		return size_t(key);
+	}
+};
+template<>
+struct thehashfanc<string>
+{
+	size_t operator()(const string& key)
+	{
+		size_t hash0 = 0;
+		for (auto& a : key)
+		{
+			hash0 *= 131;
+			hash0 += a;
+		}
+		return hash0;
+	}
+	
+};
+template<class k, class v,class hashfanc=thehashfanc<k>>
 struct hashtable
 {
 	typedef hashnode<k, v> node;
@@ -130,6 +153,20 @@ struct hashtable
 			:_data(num,nullptr)
 			, _n (0)
 	{ }
+	~hashtable()
+	{
+		for (size_t i = 0; i < _data.size(); i++)
+		{
+			node* cur = _data[i];
+			while (cur)
+			{
+				node* next = cur->next;
+				delete cur;
+				cur = next;
+			}
+			_data[i] = nullptr;
+		}
+	}
 	bool insert(const pair<k, v>& kv)
 	{
 		if (find(kv.first))
@@ -138,7 +175,7 @@ struct hashtable
 		}
 		if (_data.size() == _n)
 		{
-			hashtable<k, v> newtable(_n * 2);
+			hashtable<k, v,hashfanc> newtable(_n * 2);
 			int i = 0;
 			for (i = 0; i < _data.size(); i++)
 			{
@@ -146,7 +183,7 @@ struct hashtable
 				while (cur)
 				{
 					node* next = cur->next;
-					size_t hash0 = cur->_kv.first% newtable._data.size();
+					size_t hash0 = _hash(cur->_kv.first)% newtable._data.size();
 					cur->next = newtable._data[hash0];
 					newtable._data[hash0] = cur;
 					cur = next;
@@ -156,16 +193,45 @@ struct hashtable
 			swap(this->_data,newtable._data);
 
 		}
-		size_t hash0 = kv.first % _data.size();
+		size_t hash0 = _hash(kv.first) % _data.size();
 		node* newnode = new node(kv);
 		newnode->next = _data[hash0];
 		_data[hash0] = newnode;
 		_n++;
 		return true;
 	}
+	bool erase(const k& key)
+	{
+		size_t hash0 = _hash(key) % _data.size();
+		node* cur = _data[hash0];
+		node* prev = nullptr;
+		while (cur)
+		{
+			if (cur->_kv.first == key)
+			{
+				if (cur == _data[hash0])
+				{
+					_data[hash0] = cur->next;
+					delete cur;
+					_n--;
+					return true;
+			}
+				prev->next = cur->next;
+				delete cur;
+				_n--;
+				return true;
+			}
+			else
+			{
+				prev = cur;
+				cur = cur->next;
+			}
+		}
+		return false;
+	}
 	node* find(const k& key)
 	{
-		size_t hash0 = key % _data.size();
+		size_t hash0 = _hash(key) % _data.size();
 		node* cur = _data[hash0];
 		while (cur)
 		{
@@ -180,6 +246,7 @@ struct hashtable
 		return nullptr;
 	}
 private:
+	hashfanc _hash;
 	vector<node*> _data;
 	size_t _n;
 };
