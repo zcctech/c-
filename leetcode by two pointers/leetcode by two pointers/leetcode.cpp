@@ -113,3 +113,69 @@ public:
         return n;
     }
 };
+
+//leetcode by 167
+class Solution {
+public:
+    std::vector<int> twoSum(std::vector<int>& numbers, int target) {
+        int left = 0;
+        int right = numbers.size() - 1;
+        while (left < right)
+        {
+            if (numbers[left] + numbers[right] < target)
+            {
+                left++;
+            }
+            else if (numbers[left] + numbers[right] > target)
+            {
+                right--;
+            }
+            else {
+                break;
+            }
+        }
+        std::vector<int> ans = { left + 1,right + 1 };
+
+        return ans;
+    }
+};
+//leetcode by 15
+class Solution {
+public:
+    std::vector<std::vector<int>> threeSum(std::vector<int>& nums) {
+        std::sort(nums.begin(), nums.end());
+        std::vector<std::vector<int>> ans;
+        for (int i = nums.size() - 1; i >= 2; i--) {
+            int left = 0;
+            int right = i - 1;
+            int key = 0 - nums[i];
+            while (left < right) {
+
+                if (nums[left] + nums[right] < key) {
+                    left++;
+                }
+                else if (nums[left] + nums[right] > key) {
+                    right--;
+                }
+                else {
+
+                    std::vector<int> cur = { nums[i], nums[right], nums[left] };
+                    ans.push_back(cur);
+                    while (nums[left] == nums[left + 1] && left < right) {
+                        left++;
+                    }
+                    while (nums[right] == nums[right - 1] && left < right) {
+                        right--;
+                    }
+
+                    right--;
+                    left++;
+                }
+            }
+            while (nums[i] == nums[i - 1] && i >= 2) {
+                i--;
+            }
+        }
+        return ans;
+    }
+};
