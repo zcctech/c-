@@ -179,3 +179,57 @@ public:
         return ans;
     }
 };
+//leetcode by 18
+class Solution {
+public:
+    std::vector<std::vector<int>> fourSum(std::vector<int>& nums, int target) {
+        int n = nums.size();
+        std::vector<std::vector<int>> ans;
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < n - 3; i++)
+        {
+            for (int j = i + 1; j < n - 2; j++)
+            {
+                long long key = (long long)target - nums[i] - nums[j];
+                int left = j + 1;
+                int right = n - 1;
+                while (left < right)
+                {
+                    long long sum = nums[left] + nums[right];
+                    if (sum < key)
+                    {
+                        left++;
+                    }
+                    else if (sum > key)
+                    {
+                        right--;
+                    }
+                    else {
+                        std::vector<int> cur = { nums[i],nums[j],nums[left],nums[right] };
+                        ans.push_back(cur);
+                        while (left < right && nums[left] == nums[left + 1])
+                        {
+                            left++;
+                        }
+                        while (left < right && nums[right] == nums[right - 1])
+                        {
+                            right--;
+                        }
+                        left++;
+                        right--;
+
+                    }
+                }
+                while (j < n - 2 && nums[j] == nums[j + 1])
+                {
+                    j++;
+                }
+            }
+            while (i < n - 3 && nums[i] == nums[i + 1])
+            {
+                i++;
+            }
+        }
+        return ans;
+    }
+};
