@@ -74,3 +74,39 @@ public:
         return ret;
     }
 };
+//leetcode by 1658
+class Solution {
+public:
+    int minOperations(std::vector<int>& nums, int x) {
+        int sum = 0;
+        int left = 0;
+        int right = 0;
+        int size = nums.size();
+        int s = 0;
+        int len = 0;
+        for (auto a : nums) {
+            sum += a;
+        }
+        int target = sum - x;
+        if (target < 0) {
+            return -1;
+        }
+        else if (target == 0) {
+            return size;
+        }
+
+        while (right < size) {
+            s += nums[right];
+            while (s > target) {
+                s -= nums[left++];
+            }
+            if (s == target) {
+                len = std::max(len, right - left + 1);
+                s -= nums[left++];
+            }
+
+            right++;
+        }
+        return len != 0 ? size - len : -1;
+    }
+};
