@@ -17,6 +17,7 @@ bin-release/
 *.exe
 *.sln
 *.vcxproj
+!/binary search tree/binary search tree/binary search tree.vcxproj
 *.filters
 *.user
 *.suo
