@@ -110,3 +110,41 @@ public:
         return len != 0 ? size - len : -1;
     }
 };
+
+
+//leetcode by 438
+class Solution {
+public:
+    std::vector<int> findAnagrams(std::string s, std::string p) {
+        int hash1[26] = { 0 };
+        int hash2[26] = { 0 };
+        for (auto ch : p) {
+            hash1[ch - 'a']++;
+        }
+        int left = 0;
+        int right = 0;
+        int count = 0;
+        int size = s.size();
+        std::vector<int> ans;
+        while (right < size) {
+            hash2[s[right] - 'a']++;
+            if (hash2[s[right] - 'a'] <= hash1[s[right] - 'a']) {
+                count++;
+            }
+
+            if (right - left + 1 > p.size()) {
+
+                if (hash2[s[left] - 'a'] <= hash1[s[left] - 'a']) {
+                    count--;
+                }
+                hash2[s[left] - 'a']--;
+                left++;
+            }
+            if (count == p.size()) {
+                ans.push_back(left);
+            }
+            right++;
+        }
+        return ans;
+    }
+};
